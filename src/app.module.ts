@@ -1,12 +1,10 @@
 import { Module } from '@nestjs/common';
-import { Month } from './month/month.module';
-
-import { gameService } from './game/game.service';
 import { PrismaService } from './prisma/prisma.service';
+import { Game } from './game/game.module';
+import { GameListModule } from './game-list/game-list.module';
 
 @Module({
-  imports: [Month],
-  controllers: [],
-  providers: [gameService, PrismaService],
+  imports: [Game, GameListModule],
+  providers: [PrismaService],
 })
 export class AppModule {}

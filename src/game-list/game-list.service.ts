@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
+import { Injectable } from '@nestjs/common';
 import { AxiosResponse } from 'axios';
 import { Observable } from 'rxjs';
 
@@ -56,9 +56,10 @@ type Requirements = {
 };
 
 @Injectable()
-export class MonthService {
+export class GameListService {
   constructor(private readonly httpService: HttpService) {}
-  games(): Observable<AxiosResponse<Data[]>> {
+
+  pullGameList(): Observable<AxiosResponse<Data>> {
     return this.httpService.get(urlArg);
   }
 }
