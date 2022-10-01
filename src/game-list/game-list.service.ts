@@ -2,11 +2,14 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import { AxiosResponse } from 'axios';
 import { Observable } from 'rxjs';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { GameList, Game, Prisma } from '@prisma/client';
 
 const apiKey = process.env['RAWG_API_KEY'];
-let startDate = '2022-09-01'; //2022-09-01
-let endDate = '2022-09-30'; //2022-09-30
+let startDate = '2022-11-01'; //2022-09-01
+let endDate = '2022-11-30'; //2022-09-30
 const urlArg = `https://api.rawg.io/api/games?key=${apiKey}&dates=${startDate},${endDate}`;
+const monthUrlArg = `https://api.rawg.io/api/games?key=${apiKey}`;
 
 type DataResult = {
   id: number;
@@ -57,9 +60,47 @@ type Requirements = {
 
 @Injectable()
 export class GameListService {
-  constructor(private readonly httpService: HttpService) {}
+  constructor(
+    private readonly httpService: HttpService,
+    private readonly prisma: PrismaService,
+  ) {}
 
   pullGameList(): Observable<AxiosResponse<Data>> {
     return this.httpService.get(urlArg);
   }
+
+  async createGameList(data: Prisma.GameListCreateInput): Promise<GameList> {
+    return this.prisma.gameList.create({
+      data,
+    });
+  }
+
+  async createGame(data: Prisma.GameCreateInput): Promise<Game> {
+    return this.prisma.game.create({
+      data,
+    });
+  }
+
+  // pullGameListObservable(): Observable<AxiosResponse<Data>> {
+  //   return this.httpService.get(urlArg).pipe(
+  //     map((response) => response.data),
+  //     map((data) => data.results),
+  //     map((results) => results.map(({ id }) => id)),
+  //   );
+  // }
+
+  testFunc(start, end): Promise<number[]> {
+    let url = `${monthUrlArg}&dates=${start},${end}`;
+    return this.httpService.axiosRef
+      .get(url)
+      .then((res) => res?.data?.results?.map(({ id }) => id));
+  }
+
+  //   async extractIds(data: any): Promise<GameList> {
+  //     return new Promise<any>((resolve, reject) => {
+  //       resolve(console.log(data));
+  //     });
+  //   }
+
+  //   this.httpService.axiosRef.get(urlArg).then(res => res.?data.?results.?map(({id}) => id))
 }

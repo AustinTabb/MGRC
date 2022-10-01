@@ -1,14 +1,15 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Req } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { game, Prisma } from '@prisma/client';
 import { HttpService } from '@nestjs/axios';
-import { AxiosResponse } from 'axios';
-import { Observable } from 'rxjs';
+import { GameList, Prisma } from '@prisma/client';
+import axios from 'axios';
 
 const apiKey = process.env['RAWG_API_KEY'];
-let startDate = '2022-09-01'; //2022-09-01
-let endDate = '2022-09-30'; //2022-09-30
-const urlArg = `https://api.rawg.io/api/games?key=${apiKey}&dates=${startDate},${endDate}`;
+let slugName = 'splatoon-3';
+let gameId = 840768;
+const urlArg = `https://api.rawg.io/api/games/${gameId}?key=${apiKey}`; //&dates=${startDate}  id=${gameId}
+const trailerUrlArg = `https://api.rawg.io/api/games/${gameId}/movies?key=${apiKey}`;
+const gamesDetailUrl = `https://api.rawg.io/api/games/{gameId}?key=${apiKey}`;
 
 type DataResult = {
   id: number;
@@ -63,39 +64,26 @@ export class GameService {
     private prisma: PrismaService,
     private httpService: HttpService,
   ) {}
-
-  async game(
-    gameWhereUniqueInput: Prisma.gameWhereUniqueInput,
-  ): Promise<game | null> {
-    return this.prisma.game.findUnique({
-      where: gameWhereUniqueInput,
+  getGameList(
+    gameListWhereUniqueInput: Prisma.GameListWhereUniqueInput,
+  ): Promise<GameList | null> {
+    return this.prisma.gameList.findUnique({
+      where: gameListWhereUniqueInput,
     });
   }
-
-  async createGame(data: Prisma.gameCreateInput): Promise<game> {
-    return this.prisma.game.create({
-      data,
-    });
+  rawGGame(): Promise<DataResult> {
+    return this.httpService.axiosRef.get(urlArg).then((res) => res?.data);
   }
 
-  async updateGame(params: {
-    where: Prisma.gameWhereUniqueInput;
-    data: Prisma.gameUpdateInput;
-  }): Promise<game> {
-    const { where, data } = params;
-    return this.prisma.game.update({
-      data,
-      where,
-    });
+  rawGGameTest(gameId): Promise<DataResult> {
+    return this.httpService.axiosRef
+      .get(gamesDetailUrl.replace('{gameId}', gameId))
+      .then((res) => res?.data);
   }
 
-  async deleteGame(where: Prisma.gameWhereUniqueInput): Promise<game> {
-    return this.prisma.game.delete({
-      where,
-    });
-  }
-
-  games(): Observable<AxiosResponse<Data>> {
-    return this.httpService.get(urlArg);
+  gameTrailers(): Promise<DataResult> {
+    return this.httpService.axiosRef
+      .get(trailerUrlArg)
+      .then((res) => res?.data);
   }
 }
