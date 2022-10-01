@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { HttpService } from '@nestjs/axios';
-import { AxiosResponse } from 'axios';
-import { Observable } from 'rxjs';
+import { GameList } from '@prisma/client';
+import Axios from 'axios';
 
 const apiKey = process.env['RAWG_API_KEY'];
 let startDate = '2022-09-01'; //2022-09-01
@@ -56,9 +55,15 @@ type Requirements = {
 };
 
 @Injectable()
-export class MonthService {
-  constructor(private readonly httpService: HttpService) {}
-  games(): Observable<AxiosResponse<Data[]>> {
-    return this.httpService.get(urlArg);
+export class RawgService {
+  constructor() {}
+
+  async rawgApiPull(): Promise<Data | null> {
+    let response = null;
+    try {
+      response = await Axios.get(urlArg);
+      console.log(response, 'Test Response');
+    } catch (error) {}
+    return response;
   }
 }
