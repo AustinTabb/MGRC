@@ -1,14 +1,7 @@
-import { Injectable, Req } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
-import { GameList, Prisma } from '@prisma/client';
-import axios from 'axios';
 
 const apiKey = process.env['RAWG_API_KEY'];
-let slugName = 'splatoon-3';
-let gameId = 840768;
-const urlArg = `https://api.rawg.io/api/games/${gameId}?key=${apiKey}`; //&dates=${startDate}  id=${gameId}
-const trailerUrlArg = `https://api.rawg.io/api/games/${gameId}/movies?key=${apiKey}`;
 const gamesDetailUrl = `https://api.rawg.io/api/games/{gameId}?key=${apiKey}`;
 
 type DataResult = {
@@ -37,12 +30,7 @@ type EsrbRating = {
   slug: string;
   name: string;
 };
-type Data = {
-  count: number;
-  next: string;
-  previous: string;
-  results: DataResult[];
-};
+
 type Platforms = {
   platform: Platform;
   released_at: string;
@@ -60,30 +48,11 @@ type Requirements = {
 
 @Injectable()
 export class GameService {
-  constructor(
-    private prisma: PrismaService,
-    private httpService: HttpService,
-  ) {}
-  getGameList(
-    gameListWhereUniqueInput: Prisma.GameListWhereUniqueInput,
-  ): Promise<GameList | null> {
-    return this.prisma.gameList.findUnique({
-      where: gameListWhereUniqueInput,
-    });
-  }
-  rawGGame(): Promise<DataResult> {
-    return this.httpService.axiosRef.get(urlArg).then((res) => res?.data);
-  }
+  constructor(private httpService: HttpService) {}
 
-  rawGGameTest(gameId): Promise<DataResult> {
+  rawGGameDetails(gameId): Promise<DataResult> {
     return this.httpService.axiosRef
       .get(gamesDetailUrl.replace('{gameId}', gameId))
-      .then((res) => res?.data);
-  }
-
-  gameTrailers(): Promise<DataResult> {
-    return this.httpService.axiosRef
-      .get(trailerUrlArg)
       .then((res) => res?.data);
   }
 }

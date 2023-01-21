@@ -13,15 +13,20 @@ datasource db {
 model GameList {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
   name      String?  @unique
+  active    Boolean? @default(false) //To do @unique
   games     Game[]
 }
 
 model Game {
-  rawGId     Int       @unique
-  youtubeUrl String[]
-  gameList   GameList? @relation(fields: [gameListId], references: [id])
-  gameListId Int?
-  winner     Boolean   @default(false)
+  rawGId      Int       @unique
+  votingMonth String? //Nov22
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @default(now())
+  youtubeUrl  String[]
+  gameList    GameList? @relation(fields: [gameListId], references: [id])
+  gameListId  Int?
+  winner      Boolean   @default(false)
+  Archive     Boolean   @default(false)
 }
