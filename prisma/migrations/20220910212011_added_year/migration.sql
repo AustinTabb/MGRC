@@ -1,2 +1,2 @@
 -- AlterTable
-ALTER TABLE "GameList" ADD COLUMN     "year" TEXT;
+ALTER TABLE "ballot" ADD COLUMN     "year" TEXT;

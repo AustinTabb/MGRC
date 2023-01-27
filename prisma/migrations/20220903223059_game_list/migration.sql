@@ -29,12 +29,12 @@ DROP TABLE "game_platform";
 DROP TABLE "short_screenshots";
 
 -- CreateTable
-CREATE TABLE "GameList" (
+CREATE TABLE "ballot" (
     "id" SERIAL NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "name" TEXT,
     "rawGIds" INTEGER[],
 
-    CONSTRAINT "GameList_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "ballot_pkey" PRIMARY KEY ("id")
 );

@@ -1,8 +1,8 @@
 -- DropForeignKey
-ALTER TABLE "Game" DROP CONSTRAINT "Game_gameListId_fkey";
+ALTER TABLE "Game" DROP CONSTRAINT "Game_ballotId_fkey";
 
 -- AlterTable
-ALTER TABLE "Game" ALTER COLUMN "gameListId" DROP NOT NULL;
+ALTER TABLE "Game" ALTER COLUMN "ballotId" DROP NOT NULL;
 
 -- AddForeignKey
-ALTER TABLE "Game" ADD CONSTRAINT "Game_gameListId_fkey" FOREIGN KEY ("gameListId") REFERENCES "GameList"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "Game" ADD CONSTRAINT "Game_ballotId_fkey" FOREIGN KEY ("ballotId") REFERENCES "ballot"("id") ON DELETE SET NULL ON UPDATE CASCADE;

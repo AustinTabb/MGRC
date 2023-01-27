@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { Prisma } from '@prisma/client';
 
 const apiKey = process.env['RAWG_API_KEY'];
 const gamesDetailUrl = `https://api.rawg.io/api/games/{gameId}?key=${apiKey}`;
@@ -48,11 +50,27 @@ type Requirements = {
 
 @Injectable()
 export class GameService {
-  constructor(private httpService: HttpService) {}
+  constructor(
+    private readonly httpService: HttpService,
+    private readonly prisma: PrismaService,
+  ) {}
 
   rawGGameDetails(gameId): Promise<DataResult> {
     return this.httpService.axiosRef
       .get(gamesDetailUrl.replace('{gameId}', gameId))
       .then((res) => res?.data);
   }
+
+  async updateGame(rawGId: number, data: {}) {
+    return this.prisma.game.update({
+      where: { rawGId: rawGId },
+      data,
+    });
+  }
+  // async updateGame(rawGId: number) {
+  //   return await this.prisma.game.update({
+  //     where: { rawGId: rawGId },
+  //     data: {},
+  //   });
+  // }
 }

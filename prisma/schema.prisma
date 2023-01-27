@@ -10,8 +10,8 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model GameList {
-  id        Int      @id @default(autoincrement())
+model ballot {
+  id        Int      @id @unique @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   name      String?  @unique
@@ -20,13 +20,13 @@ model GameList {
 }
 
 model Game {
-  rawGId      Int       @unique
+  rawGId      Int      @unique
   votingMonth String? //Nov22
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
   youtubeUrl  String[]
-  gameList    GameList? @relation(fields: [gameListId], references: [id])
-  gameListId  Int?
-  winner      Boolean   @default(false)
-  Archive     Boolean   @default(false)
+  ballot      ballot?  @relation(fields: [ballotId], references: [id])
+  ballotId    Int?     @unique
+  winner      Boolean  @default(false)
+  Archive     Boolean  @default(false)
 }

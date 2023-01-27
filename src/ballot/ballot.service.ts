@@ -7,7 +7,7 @@ const apiKey = process.env['RAWG_API_KEY'];
 const monthUrlArg = `https://api.rawg.io/api/games?key=${apiKey}`;
 
 @Injectable()
-export class GameListService {
+export class ballotService {
   constructor(
     private readonly httpService: HttpService,
     private readonly prisma: PrismaService,
@@ -24,32 +24,30 @@ export class GameListService {
       .then((res) => res?.data?.results?.map(({ id }) => id));
   }
 
-  async gatherGameList(listId: string) {
-    const gameIdNum = parseInt(listId, 10);
-    const gameList = await this.prisma.game.findMany({
-      where: { gameListId: gameIdNum },
+  async gatherballot(listId: number) {
+    const ballotId = listId;
+    const ballot = await this.prisma.ballot.findUnique({
+      where: { id: ballotId },
     });
 
-    return gameList;
+    return ballot;
   }
 
-  async gatherAllGameLists() {
-    const gameLists = await this.prisma.gameList.findMany();
-    return gameLists;
+  async gatherAllballots() {
+    const ballots = await this.prisma.ballot.findMany();
+    return ballots;
   }
 
-  createGameList(listName) {
-    return this.prisma.gameList.create({
+  createballot(listName) {
+    return this.prisma.ballot.create({
       data: { name: `${listName}` },
     });
   }
 
-  async updateGameList(listId: number, rawGId: number) {
-    return await this.prisma.game.update({
-      where: { rawGId: rawGId },
-      data: {
-        gameListId: listId,
-      },
+  async updateballot(listId: number, data) {
+    return await this.prisma.ballot.update({
+      where: { id: listId },
+      data,
     });
   }
   async updateYouTubeUrl(url: string, rawGId: number) {
@@ -90,14 +88,14 @@ export class GameListService {
   }
 
   async toggleActiveTrue(listId: number) {
-    return await this.prisma.gameList.update({
+    return await this.prisma.ballot.update({
       where: { id: listId },
       data: { active: true },
     });
   }
 
   async toggleActiveFalse(listId: number) {
-    return await this.prisma.gameList.update({
+    return await this.prisma.ballot.update({
       where: { id: listId },
       data: { active: false },
     });

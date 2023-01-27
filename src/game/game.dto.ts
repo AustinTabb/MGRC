@@ -7,7 +7,7 @@ export class Game {
   /**
    * @deprecated
    */
-  gameListId?: string;
+  ballotId?: string;
   winnner: boolean;
   archive: boolean;
 }

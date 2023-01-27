@@ -1,6 +1,6 @@
 import { Game } from 'src/game/game.dto';
 
-export class GameListDto {
+export class ballotDto {
   createdAt: Date;
   updatedAt: Date;
   name: string;
