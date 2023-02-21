@@ -10,29 +10,23 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model game {
-  id               Int                 @id @default(autoincrement())
-  name             String
-  rawG_Id          Int
-  background_image String
-  released         Int
-  winner           Boolean
-  voting           Boolean
-  archive          Boolean
-  platforms        game_platform[]
-  screenshots      short_screenshots[]
+model ballot {
+  id        Int      @id @unique @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  name      String?  @unique
+  active    Boolean? @default(false) //To do @unique
+  games     Game[]
 }
 
-model game_platform {
-  id   Int    @id
-  slug String
-  name String
-  game game[]
-}
-
-model short_screenshots {
-  id     Int    @id
-  image  String
-  game   game?  @relation(fields: [gameId], references: [id])
-  gameId Int?
+model Game {
+  rawGId      Int      @unique
+  votingMonth String? //Nov22
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
+  youtubeUrl  String[]
+  ballot      ballot?  @relation(fields: [ballotId], references: [id])
+  ballotId    Int?     @unique
+  winner      Boolean  @default(false)
+  Archive     Boolean  @default(false)
 }
