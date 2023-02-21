@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { Prisma } from '@prisma/client';
 
 const apiKey = process.env['RAWG_API_KEY'];
 const gamesDetailUrl = `https://api.rawg.io/api/games/{gameId}?key=${apiKey}`;
@@ -61,10 +60,23 @@ export class GameService {
       .then((res) => res?.data);
   }
 
-  async updateGame(rawGId: number, data: {}) {
+  async updateGame(
+    rawGId: number,
+    data: {
+      ballotId: number;
+      youtubeUrl: string;
+      winner: boolean;
+      Archive: boolean;
+    },
+  ) {
     return this.prisma.game.update({
       where: { rawGId: rawGId },
-      data,
+      data: {
+        ballotId: data.ballotId,
+        youtubeUrl: data.youtubeUrl,
+        winner: data.winner,
+        Archive: data.Archive,
+      },
     });
   }
   // async updateGame(rawGId: number) {

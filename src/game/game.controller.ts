@@ -11,11 +11,16 @@ export class GameController {
     return this.gameService.rawGGameDetails(gameId);
   }
 
-  @Patch(':rawGId')
-  async patchGame(
-    @Body() createGamePatchDto: CreateGamePatchDto,
-    @Param('rawGId') rawGId: string,
-  ) {
-    return this.gameService.updateGame(parseInt(rawGId), createGamePatchDto);
+  @Patch()
+  async patchGame(@Body() createGamePatchDto: CreateGamePatchDto) {
+    const { rawGId, ballotId, winner, Archive, youtubeUrl } =
+      createGamePatchDto;
+    console.log('test');
+    return this.gameService.updateGame(rawGId, {
+      ballotId,
+      winner,
+      Archive,
+      youtubeUrl,
+    });
   }
 }

@@ -1,4 +1,13 @@
+import { IsNotEmpty, IsNumber, IsOptional } from 'class-validator';
+
 export class CreateBallotPatchDto {
-  id: string;
-  active: Boolean;
+  @IsNotEmpty()
+  @IsNumber()
+  id: number;
+
+  @IsOptional()
+  name: string;
+
+  @IsOptional()
+  active: boolean;
 }

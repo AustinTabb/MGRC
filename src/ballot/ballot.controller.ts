@@ -1,4 +1,13 @@
-import { Controller, Post, Body, Get, Param, Patch } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Get,
+  Param,
+  Patch,
+  HttpCode,
+  HttpStatus,
+} from '@nestjs/common';
 import { ballotService } from './ballot.service';
 import { CreateMonthDto } from './create-month.dto';
 import { CreateBallotPatchDto } from './ballotPatch.dto';
@@ -14,51 +23,31 @@ export class ballotController {
 
   @Get(':ballotId')
   async pullballotDb(@Param('ballotId') ballotId: string): Promise<any> {
-    console.log(ballotId, 'test');
     return await this.ballotService.gatherballot(parseInt(ballotId));
   }
 
-  @Post('ballotCreate')
-  async ballotcreate(
+  @HttpCode(HttpStatus.OK)
+  @Post('Create')
+  async create(
+    @Body('name') name: string,
     @Body() createMonthDto: CreateMonthDto,
-    @Body('listName') listName: string,
   ) {
+    const votingMonth = createMonthDto.startDate;
     const idList = await this.ballotService.dateSelectAdd(
       createMonthDto.startDate,
       createMonthDto.endDate,
     );
     const games = idList.map((rawGId) => ({
       rawGId,
-      votingMonth: listName,
+      votingMonth: votingMonth,
     }));
-    const list = await this.ballotService.createballot(listName);
-    return this.ballotService.createGame(games);
+    return this.ballotService.create(name, games);
   }
 
-  // Create DTO and combine all Patches
-  @Patch(':id')
-  async patchBallot(
-    @Body() createBallotPatchDto: CreateBallotPatchDto,
-    @Param('ballotId') ballotId: number,
-  ) {
-    return this.ballotService.updateballot(ballotId, createBallotPatchDto);
-  }
+  @Patch()
+  async patchBallot(@Body() createBallotPatchDto: CreateBallotPatchDto) {
+    const { id, name, active } = createBallotPatchDto;
 
-  @Patch('ballotUpdate')
-  async updateballot(
-    @Body('listId') listId: number,
-    @Body('rawGId') rawGId: number,
-  ) {
-    return await this.ballotService.updateballot(listId, rawGId);
-  }
-
-  @Patch('toggleArchiveTrue')
-  async toggleArchiveTrue(@Body('rawGId') rawGId: number) {
-    return await this.ballotService.toggleArchiveTrue(rawGId);
-  }
-
-  @Patch('toggleArchiveFalse')
-  async toggleArchiveFalse(@Body('rawGId') rawGId: number) {
-    return await this.ballotService.toggleArchiveFalse(rawGId);
+    return this.ballotService.updateballot(id, { name, active });
   }
 }
